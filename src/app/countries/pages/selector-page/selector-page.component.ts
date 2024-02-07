@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Region, SmallCountry } from '../../interfaces/country';
 import { CountriesService } from '../../services/countries.service';
-import { switchMap, tap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-selector-page',
@@ -40,12 +40,13 @@ export class SelectorPageComponent implements OnInit {
   }
 
   onCountryChange() : void {
-    this.form.get('country')?.valueChanges
+    this.form.get('country')?.valueChanges.pipe(
+      filter(value => value!.length > 0 )
+    )
     .subscribe(res => {
       const borders = this.countriesByRegion.find((country) => country.cca3===res)?.borders ?? []
-
       if(borders.length > 0) {
-        this.bordersOfCountry
+        this.bordersOfCountry = borders
         console.log(res, this.bordersOfCountry)
       }
     })

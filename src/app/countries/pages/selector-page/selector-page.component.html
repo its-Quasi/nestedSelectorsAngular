@@ -1,6 +1,7 @@
 <h3 class="mt-3">Selectores Anidados</h3>
 <hr>
 <form [formGroup]="form">
+
   <!-- regions -->
   <div class="row mb-3">
     <div class="col">
@@ -13,7 +14,7 @@
   </div>
 
   <!-- countries -->
-  <div class="row mb-3" *ngIf="countriesByRegion.length!==0">
+  <div class="row mb-3" *ngIf="countriesByRegion.length > 0">
     <div class="col">
       <label class="form-label">Pais</label>
       <select class="form-control" formControlName="country">
@@ -26,6 +27,17 @@
     </div>
   </div>
   
+  <!-- borders -->
+  <div class="row mb-3" *ngIf="bordersOfCountry.length > 0">
+    <div class="col">
+      <label class="form-label">Fronteras</label>
+      <select class="form-control" formControlName="borders">
+        <option value=""> --Seleccione la frontera-- </option>
+        <option value="" *ngFor="let border of bordersOfCountry">{{border}}</option>
+      </select>
+    </div>
+  </div>
+
 <code>
   {{form.value | json }}
 </code>
