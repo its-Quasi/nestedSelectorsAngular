@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Country, Region, SmallCountry } from '../interfaces/country';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
-import { combineLatest, forkJoin, map, of, tap } from 'rxjs';
+import { combineLatest, map, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -29,12 +29,12 @@ export class CountriesService {
   }
 
   getCountryByCca3(cca3 : string) : Observable<SmallCountry> {
-    const url = `${this.url}/alpha/${cca3}/?fields=name`
+    const url = `${this.url}/alpha/${cca3}/?fields=name,borders`
     return this.http.get<Country>(url).pipe(
       map(country  => ({
         name:country.name.common,
         cca3:'',
-        borders:[]
+        borders: country.borders || []
       }))
     )
   }

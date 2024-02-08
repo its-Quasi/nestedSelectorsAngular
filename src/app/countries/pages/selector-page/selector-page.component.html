@@ -33,7 +33,7 @@
       <label class="form-label">Fronteras</label>
       <select class="form-control" formControlName="borders">
         <option value=""> --Seleccione la frontera-- </option>
-        <option value="" *ngFor="let border of bordersOfCountry">{{border}}</option>
+        <option [value]="border" *ngFor="let border of bordersOfCountry">{{border}}</option>
       </select>
     </div>
   </div>

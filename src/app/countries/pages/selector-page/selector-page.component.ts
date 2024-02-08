@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Region, SmallCountry } from '../../interfaces/country';
 import { CountriesService } from '../../services/countries.service';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-selector-page',
@@ -40,15 +40,31 @@ export class SelectorPageComponent implements OnInit {
   }
 
   onCountryChange() : void {
-    this.form.get('country')?.valueChanges.pipe(
-      filter(value => value!.length > 0 )
+    // course approach
+
+    this.form.get('country')?.valueChanges
+    .pipe(
+      map(value => value as string),
+      filter(value => value.length > 0),
+      switchMap(alphacode => this.countriesService.getCountryByCca3(alphacode)),
+      switchMap(country => this.countriesService.getCountriesByCca3(country.borders)),
+      map(borders => borders.map(border => border.name))
     )
-    .subscribe(res => {
-      const borders = this.countriesByRegion.find((country) => country.cca3===res)?.borders ?? []
-      if(borders.length > 0) {
-        this.bordersOfCountry = borders
-        console.log(res, this.bordersOfCountry)
-      }
-    })
+    .subscribe(borderNames => this.bordersOfCountry = borderNames)
+
+
+
+    /** my approach */ 
+    // this.form.get('country')?.valueChanges.pipe(
+    //   filter(value => value!.length > 0 )
+    // )
+    // .subscribe(res => {
+    //   const borders = this.countriesByRegion.find((country) => country.cca3===res)?.borders ?? []
+    //   if(borders.length > 0) {
+    //     this.countriesService.getCountriesByCca3(borders).subscribe(
+    //       res => this.bordersOfCountry = res.map(country => country.name)
+    //     )
+    //   }
+    // })
   }
 }
